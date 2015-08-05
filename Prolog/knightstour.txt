@@ -1,0 +1,56 @@
+This project, and all code, text documents and any other files submitted are completely my own work, and have not been plagiarised from any sources unless otherwise stated. I fully understand the seriousness of plagiarism, and am aware of and accept the Universities rules and reguations regarding plagiarism.
+
+Name: Michael Wall
+Student Number: 13522003
+Course: CASE2
+Module: CA208
+Assignment: KnightsPath
+
+I have documented my thoughts and approach to the design and implementation of the assignment below, including the answer for the question posed regarding a path from 2/1 to the opposite side of the board.
+
+So when I started this assignment, I was very overwhelmed with the apparent scale of the question asked. I was clueless as to how I would go about figuring out each path a knight could take. After lots of thinking and practicing lots of prolog questions from labs and external sources, I felt I had built up enough knowledge to approach the question.
+
+I started by building a chessboard with a database of facts. This was similar to the approach taken in questions where you must find a path between towns and cities, except that I would be defining the individual squares instead of paths via facts, and then creating the paths on execution.
+
+The next step was to create a range of valid moves for the knight from any given, unknown square on the board. I took the sentence from the assignment description "A Knight can move 2 square vertically and 1 square horizontally, or 2 squarse horizontally and 1 square vertically" and translated it to a logical statement which I used in my program. I did not explicitly check that a valid move was within the borders of the chessboard, as this was done by validating that the squares involved in the move existed in the predefined facts.
+
+After this when I reached the point where I would need to start using lists, I read through the question, and noted any basic list relations I could use which I had learned previously. I then implemented these and tested them individually.
+
+My next step was to create the knightpath. The simplest path possible would be a single move from any point on the board to another. I used this as my base case. The recursive case I used was to split the Path into a list with two elements at the head, and the tail containing the rest of the path (as presumably when this predicate is reached, it means there is more than just two single elements in the list). A valid move was tested from the first to the second element, and then the second element had the tail appended to it, and was passed back into the original predicate again. I felt that my coding of this predicate was inneficient, and could have been approached better if I had a better skill level in Prolog. However, I did find that this approach was less likely to give repeating loops in paths.
+
+The next section was to design the knightjourney. I actually found this to be a lot easier than I first anticipated. I broke it into three problems: finding the first (head) element of the path, the last (end) element of the path, and finding the length of the path. Length of a list is very basic, and so that was not an issue. The head of a list was similarly basic. However the end of a list took a bit more thinking. I then realised that the last element in the list could be accesed in a list on its own, similarly to how the base case worked for a valid knightpath. And so, I continued to split the path until the last element was found and matched with the requested end square. I found this worked very well, and that actually specifying start and end points in a path sped up the process a lot faster. I also noticed that generating paths of length 7 or more began to take a much longer time to generate (because there are many differnt possibilities).
+
+The last part was to define knightpassthru. Having had lots of practice at this stage with recursing and adding as I went through a list, I found it was just a matter of generating a knightpath, and checking the count returned for the number of times the method called itself before matching a position in the path to a square given. This question took a bit of thinking though to understand. A result of 2 for the value N ie the Nth position, refers to the position in the path list. The path starts its count at 0 (the starting position), and goes to 1 (the first move), then 2 (the second move). So even though 2 is the 3rd square in the list, it represents the 2nd move in the journey.
+
+The answer to the question:
+"Using the relations you have defined, is there a 4 move path for a knight from sqaure 2/1 to the opposite side of the board that passes through the square 5/4 after the second move? What is that path?"
+
+Yes there is a path. In fact there are multiple. At first I found the wording of the question to be a little bit confusing. I was not sure if "opposite" referred to a specific square on the opposite side, or any square on the opposite side (whose y value would be 8).
+
+View 1:
+If you interpret opposite to mean the position a player sitting opposite you would see as the same ie. 1/1 opposite 8/8 (both in bottom left corner for each player), then 2/1 would be opposite 7/8.
+
+Here is the output I received when using the following query:
+
+?- knightjourney(2/1, 7/8, 5, Path), knightpassthru(Path, 5/4, 2).
+Path = [2/1, 3/3, 5/4, 6/6, 7/8] ;
+Path = [2/1, 4/2, 5/4, 6/6, 7/8] ;
+
+Note: in knightjourney(..., ..., 5, ...) the 5 represents the length of the list, not the number of moves. The number of moves is the length minus 1 which is equal to 4, as per the questions requirements.
+
+View 2:
+I wrote a relation questionanswer() to produce a series of results if you interpret opposite as any square along row 8. I represented this in the knightjourney quesry by using the anonymous variable _ ie. (_/8). This produced a series of possible results, documented below. 
+
+?- questionanswer(Path).
+Path = [2/1, 3/3, 5/4, 4/6, 3/8] ;
+Path = [2/1, 3/3, 5/4, 4/6, 5/8] ;
+Path = [2/1, 3/3, 5/4, 6/6, 5/8] ;
+Path = [2/1, 3/3, 5/4, 6/6, 7/8] ;
+Path = [2/1, 4/2, 5/4, 4/6, 3/8] ;
+Path = [2/1, 4/2, 5/4, 4/6, 5/8] ;
+Path = [2/1, 4/2, 5/4, 6/6, 5/8] ;
+Path = [2/1, 4/2, 5/4, 6/6, 7/8] ;
+
+Note: the last element in each path ends on (X/8), where X is some value, and 8 represents the opposite side of the board.
+
+I feel that these two approaches appropriately answer the question asked, given either interpretation.
